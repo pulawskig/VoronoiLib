@@ -23,7 +23,7 @@ namespace VoronoiDemo
         private KeyboardState keyboard;
         private MouseState mouse;
 
-        private bool wiggle = true,
+        private bool wiggle = false,
                      showVoronoi = true,
                      showDelaunay = true,
                      showHelp = true,
@@ -53,7 +53,7 @@ namespace VoronoiDemo
             keyboard = Keyboard.GetState();
             mouse = Mouse.GetState();
             r = new Random(100);
-            help = new Rectangle(0, 0, 285, 200);
+            help = new Rectangle(0, 0, 285, 240);
             helpColor = new Color(Color.Black, (float).5);
             base.Initialize();
         }
@@ -84,6 +84,8 @@ namespace VoronoiDemo
                 GeneratePoints();
             if (keyboard.IsKeyDown(Keys.C) && newKeys.IsKeyUp(Keys.C))
                 ClearPoints();
+            if (keyboard.IsKeyDown(Keys.R) && newKeys.IsKeyUp(Keys.R))
+                RelaxPoints();
             if (keyboard.IsKeyDown(Keys.W) && newKeys.IsKeyUp(Keys.W))
                 wiggle = !wiggle;
             if (keyboard.IsKeyDown(Keys.V) && newKeys.IsKeyUp(Keys.V))
@@ -239,6 +241,15 @@ namespace VoronoiDemo
             }
         }
 
+        private void RelaxPoints()
+        {
+            if (points.Count == 0)
+                return;
+            points = LloydsRelaxation.Relax(points);
+            edges = FortunesAlgorithm.Run(points, 0, 0, graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);
+            GenerateDelaunay();
+        }
+
         private void WigglePoints()
         {
             var newPoints = new List<FortuneSite>(points.Count);
@@ -255,14 +266,16 @@ namespace VoronoiDemo
         {
             sb.Draw(t, help, helpColor);
             sb.DrawString(sf, "Controls: ", new Vector2(5, 10), Color.White);
-            sb.DrawString(sf, "[H] Show/ Hide Help", new Vector2(10, 30), Color.White);
+            sb.DrawString(sf, "[H] Show / Hide Help", new Vector2(10, 30), Color.White);
             sb.DrawString(sf, "[Click] Add Point", new Vector2(10, 50), Color.White);
             sb.DrawString(sf, "[G] Generate Points", new Vector2(10, 70), Color.White);
             sb.DrawString(sf, "[C] Clear Points", new Vector2(10, 90), Color.White);
-            sb.DrawString(sf, "[V] Show/ Hide Voronoi Cells", new Vector2(10, 110), Color.White);
-            sb.DrawString(sf, "[B] Show/ Hide Cells based on Points", new Vector2(10, 130), Color.White);
-            sb.DrawString(sf, "[D] Show/ Hide Delaunay Triangulation", new Vector2(10, 150), Color.White);
-            sb.DrawString(sf, "[Esc] Exit", new Vector2(10, 170), Color.White);
+            sb.DrawString(sf, "[R] Relax Points", new Vector2(10, 110), Color.White);
+            sb.DrawString(sf, "[W] Start / Stop Wiggle", new Vector2(10, 130), Color.White);
+            sb.DrawString(sf, "[V] Show / Hide Voronoi Cells", new Vector2(10, 150), Color.White);
+            sb.DrawString(sf, "[B] Show/ Hide Cells based on Points", new Vector2(10, 170), Color.White);
+            sb.DrawString(sf, "[D] Show / Hide Delaunay Triangulation", new Vector2(10, 190), Color.White);
+            sb.DrawString(sf, "[Esc] Exit", new Vector2(10, 210), Color.White);
         }
 
         private void DrawPoint(SpriteBatch sb, FortuneSite point)
