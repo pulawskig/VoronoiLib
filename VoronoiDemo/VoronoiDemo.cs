@@ -22,10 +22,12 @@ namespace VoronoiDemo
         private List<Tuple<Vector2, Vector2>> delaunay;
         private KeyboardState keyboard;
         private MouseState mouse;
+
         private bool wiggle = true,
-            showVoronoi = true,
-            showDelaunay = true,
-            showHelp = true;
+                     showVoronoi = true,
+                     showDelaunay = true,
+                     showHelp = true,
+                     showCells = false;
 
         private Random r;
         private Rectangle help;
@@ -51,7 +53,7 @@ namespace VoronoiDemo
             keyboard = Keyboard.GetState();
             mouse = Mouse.GetState();
             r = new Random(100);
-            help = new Rectangle(0, 0, 285, 180);
+            help = new Rectangle(0, 0, 285, 200);
             helpColor = new Color(Color.Black, (float).5);
             base.Initialize();
         }
@@ -86,6 +88,8 @@ namespace VoronoiDemo
                 wiggle = !wiggle;
             if (keyboard.IsKeyDown(Keys.V) && newKeys.IsKeyUp(Keys.V))
                 showVoronoi = !showVoronoi;
+            if (keyboard.IsKeyDown(Keys.B) && newKeys.IsKeyUp(Keys.B))
+                showCells = !showCells;
             if (keyboard.IsKeyDown(Keys.D) && newKeys.IsKeyUp(Keys.D))
                 showDelaunay = !showDelaunay;
             if (mouse.LeftButton == ButtonState.Pressed && newMouse.LeftButton == ButtonState.Released)
@@ -106,9 +110,21 @@ namespace VoronoiDemo
             {
                 foreach (var edge in edges)
                 {
-                    DrawLine(spriteBatch, edge);
+                    DrawLine(spriteBatch, edge, Color.Red);
                 }
             }
+
+            if (showCells)
+            {
+                foreach (var point in points)
+                {
+                    foreach (var edge in point.Cell)
+                    {
+                        DrawLine(spriteBatch, edge, Color.Blue);
+                    }
+                }
+            }
+
             if (showDelaunay)
             {
                 foreach (var edge in delaunay)
@@ -244,8 +260,9 @@ namespace VoronoiDemo
             sb.DrawString(sf, "[G] Generate Points", new Vector2(10, 70), Color.White);
             sb.DrawString(sf, "[C] Clear Points", new Vector2(10, 90), Color.White);
             sb.DrawString(sf, "[V] Show/ Hide Voronoi Cells", new Vector2(10, 110), Color.White);
-            sb.DrawString(sf, "[D] Show/ Hide Delaunay Triangulation", new Vector2(10, 130), Color.White);
-            sb.DrawString(sf, "[Esc] Exit", new Vector2(10, 150), Color.White);
+            sb.DrawString(sf, "[B] Show/ Hide Cells based on Points", new Vector2(10, 130), Color.White);
+            sb.DrawString(sf, "[D] Show/ Hide Delaunay Triangulation", new Vector2(10, 150), Color.White);
+            sb.DrawString(sf, "[Esc] Exit", new Vector2(10, 170), Color.White);
         }
 
         private void DrawPoint(SpriteBatch sb, FortuneSite point)
@@ -255,14 +272,14 @@ namespace VoronoiDemo
             sb.Draw(t, rect, Color.Green);
         }
 
-        private void DrawLine(SpriteBatch sb, VEdge vEdge)
+        private void DrawLine(SpriteBatch sb, VEdge vEdge, Color color)
         {
             float angle;
             var rect = vEdge.ToRectangle(out angle);
             sb.Draw(t,
                 rect, //width of line, change this to make thicker line
                 null,
-                Color.Red, //colour of line
+                color, //colour of line
                 angle,     //angle of line (calulated above)
                 new Vector2(0, 0), // point in line about which to rotate
                 SpriteEffects.None,

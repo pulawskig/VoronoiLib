@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace VoronoiLib.Structures
 {
@@ -17,6 +18,18 @@ namespace VoronoiLib.Structures
             Y = y;
             Cell = new List<VEdge>();
             Neighbors = new List<FortuneSite>();
+        }
+
+        internal void AddEdge(VEdge value)
+        {
+            if (value.Start == null || value.End == null
+                                    || double.IsNaN(value.Start.X) || double.IsNaN(value.Start.Y)
+                                    || double.IsNaN(value.End.X) || double.IsNaN(value.End.Y))
+            {
+                return;
+            }
+
+            Cell.Add(value);
         }
     }
 }

@@ -48,6 +48,13 @@ namespace VoronoiLib
                 var valid = ClipEdge(edge, minX, minY, maxX, maxY);
                 if (!valid)
                     edges.Remove(edgeNode);
+                else
+                {
+                    // add the edge's start/end points to the adjacent nodes cell
+                    edgeNode.Value.Left.AddEdge(edgeNode.Value);
+                    edgeNode.Value.Right.AddEdge(edgeNode.Value);
+                }
+
                 //advance
                 edgeNode = next;
             }
