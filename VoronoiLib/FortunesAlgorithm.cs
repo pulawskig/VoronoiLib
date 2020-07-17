@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using VoronoiLib.Structures;
 
 namespace VoronoiLib
@@ -36,7 +37,6 @@ namespace VoronoiLib
                     }
                 }
             }
-            
 
             //clip edges
             var edgeNode = edges.First;
@@ -58,7 +58,119 @@ namespace VoronoiLib
                 //advance
                 edgeNode = next;
             }
+
+            AddBoundingBoxEdges(edges, minX, minY, maxX, maxY);
+
             return edges;
+        }
+
+        private static void AddBoundingBoxEdges(LinkedList<VEdge> edges, double minX, double minY, double maxX, double maxY)
+        {
+            // TODO: Need to clean this up....
+
+            var edgesCopy = edges.ToList();
+            var leftEdges = edgesCopy
+                            .Where(edge => edge.Start.X.ApproxEqual(minX) || edge.End.X.ApproxEqual(minX))
+                            .Select(edge => (Edge: edge, Vertex: edge.Start.X.ApproxEqual(minX) ? edge.Start : edge.End, Start: edge.Start.X.ApproxEqual(minX)))
+                            .OrderBy(tuple => tuple.Vertex.Y)
+                            .ToArray();
+
+            var topLeftPoint = new VPoint(minX, minY);
+            var topRightPoint = new VPoint(maxX, minY);
+            var bottomLeftPoint = new VPoint(minX, maxY);
+            var bottomRightPoint = new VPoint(maxX, maxY);
+
+            var startPoint = topLeftPoint;
+            for (var i = 0; i < leftEdges.Length; i++)
+            {
+                var currentEdge = leftEdges[i];
+                var site = currentEdge.Start ? currentEdge.Edge.Left : currentEdge.Edge.Right;
+                edges.AddLast(AddEdgeForBoundingBox(startPoint, currentEdge.Vertex, site, true));
+
+                startPoint = currentEdge.Vertex;
+
+                if (i < leftEdges.Length - 1)
+                    continue;
+
+                site = currentEdge.Start ? currentEdge.Edge.Right : currentEdge.Edge.Left;
+                edges.AddLast(AddEdgeForBoundingBox(startPoint, bottomLeftPoint, site, false));
+            }
+
+            var topEdges = edgesCopy
+                           .Where(edge => edge.Start.Y.ApproxEqual(minY) || edge.End.Y.ApproxEqual(minY))
+                           .Select(edge => (Edge: edge, Vertex: edge.Start.Y.ApproxEqual(minY) ? edge.Start : edge.End, Start: edge.Start.Y.ApproxEqual(minY)))
+                           .OrderBy(tuple => tuple.Vertex.X)
+                           .ToArray();
+
+            startPoint = topLeftPoint;
+            for (var i = 0; i < topEdges.Length; i++)
+            {
+                var currentEdge = topEdges[i];
+                var site = currentEdge.Start ? currentEdge.Edge.Right : currentEdge.Edge.Left;
+                edges.AddLast(AddEdgeForBoundingBox(startPoint, currentEdge.Vertex, site, false));
+
+                startPoint = currentEdge.Vertex;
+
+                if (i < topEdges.Length - 1)
+                    continue;
+
+                site = currentEdge.Start ? currentEdge.Edge.Left : currentEdge.Edge.Right;
+                edges.AddLast(AddEdgeForBoundingBox(startPoint, topRightPoint, site, true));
+            }
+
+            var rightEdges = edgesCopy
+                             .Where(edge => edge.Start.X.ApproxEqual(maxX) || edge.End.X.ApproxEqual(maxX))
+                             .Select(edge => (Edge: edge, Vertex: edge.Start.X.ApproxEqual(maxX) ? edge.Start : edge.End, Start: edge.Start.X.ApproxEqual(maxX)))
+                             .OrderBy(tuple => tuple.Vertex.Y)
+                             .ToArray();
+
+            startPoint = topRightPoint;
+            for (var i = 0; i < rightEdges.Length; i++)
+            {
+                var currentEdge = rightEdges[i];
+                var site = currentEdge.Start ? currentEdge.Edge.Right : currentEdge.Edge.Left;
+                edges.AddLast(AddEdgeForBoundingBox(startPoint, currentEdge.Vertex, site, false));
+
+                startPoint = currentEdge.Vertex;
+
+                if (i < rightEdges.Length - 1)
+                    continue;
+
+                site = currentEdge.Start ? currentEdge.Edge.Left : currentEdge.Edge.Right;
+                edges.AddLast(AddEdgeForBoundingBox(startPoint, bottomRightPoint, site, true));
+            }
+
+            var bottomEdges = edgesCopy
+                              .Where(edge => edge.Start.Y.ApproxEqual(maxY) || edge.End.Y.ApproxEqual(maxY))
+                              .Select(edge => (Edge: edge, Vertex: edge.Start.Y.ApproxEqual(maxY) ? edge.Start : edge.End, Start: edge.Start.Y.ApproxEqual(maxY)))
+                              .OrderBy(tuple => tuple.Vertex.X)
+                              .ToArray();
+
+            startPoint = bottomLeftPoint;
+            for (var i = 0; i < bottomEdges.Length; i++)
+            {
+                var currentEdge = bottomEdges[i];
+                var site = currentEdge.Start ? currentEdge.Edge.Left : currentEdge.Edge.Right;
+                edges.AddLast(AddEdgeForBoundingBox(startPoint, currentEdge.Vertex, site, false));
+
+                startPoint = currentEdge.Vertex;
+
+                if (i < bottomEdges.Length - 1)
+                    continue;
+
+                site = currentEdge.Start ? currentEdge.Edge.Right : currentEdge.Edge.Left;
+                edges.AddLast(AddEdgeForBoundingBox(startPoint, bottomRightPoint, site, true));
+            }
+        }
+
+        private static VEdge AddEdgeForBoundingBox(VPoint startPoint, VPoint otherPoint, FortuneSite site, bool left)
+        {
+            var newEdge = new VEdge(startPoint, left ? site : null, left ? null : site)
+            {
+                End = otherPoint
+            };
+            site.Cell.Add(newEdge);
+            return newEdge;
         }
 
         //combination of personal ray clipping alg and cohen sutherland
