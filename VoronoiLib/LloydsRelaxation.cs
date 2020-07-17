@@ -34,7 +34,7 @@ namespace VoronoiLib
                 y += (y0 + y1) * a;
             }
 
-            if (area.ApproxEqual(0d))
+            if (!area.ApproxEqual(0d))
             {
                 area *= 3d;
                 x /= area;
