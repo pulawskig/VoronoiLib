@@ -55,7 +55,7 @@ namespace VoronoiDemo
             helpColor = new Color(Color.Black, (float).5);
             base.Initialize();
         }
-        
+
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
@@ -65,11 +65,11 @@ namespace VoronoiDemo
             t.SetData(new[] { Color.White });// fill the texture with white
             sf = Content.Load<SpriteFont>("Courier New");
         }
-        
+
         protected override void UnloadContent()
         {
         }
-        
+
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -141,7 +141,7 @@ namespace VoronoiDemo
             {
                 newPoints.AddRange(points.Select(point => new FortuneSite(point.X, point.Y)));
             }
-            
+
             newPoints.Add(new FortuneSite(x, y));
             points = newPoints;
 
@@ -199,7 +199,7 @@ namespace VoronoiDemo
 
             GenerateDelaunay();
             //convert ajd list to edge list... edges get double added
-            
+
         }
 
         private void GenerateDelaunay()
@@ -214,8 +214,8 @@ namespace VoronoiDemo
                     {
                         delaunay.Add(
                             new Tuple<Vector2, Vector2>(
-                                new Vector2((float) site.X, (float) site.Y),
-                                new Vector2((float) neighbor.X, (float) neighbor.Y)
+                                new Vector2((float)site.X, (float)site.Y),
+                                new Vector2((float)neighbor.X, (float)neighbor.Y)
                             ));
                     }
                 }
@@ -227,7 +227,7 @@ namespace VoronoiDemo
         {
             var newPoints = new List<FortuneSite>(points.Count);
             if (points.Count > 0)
-                newPoints.AddRange(points.Select(point => new FortuneSite(point.X + 5*r.NextDouble() - 2.5, point.Y + 5*r.NextDouble() - 2.5)));
+                newPoints.AddRange(points.Select(point => new FortuneSite(point.X + 5 * r.NextDouble() - 2.5, point.Y + 5 * r.NextDouble() - 2.5)));
             points = newPoints;
 
             edges = FortunesAlgorithm.Run(points, 0, 0, graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);
@@ -251,7 +251,7 @@ namespace VoronoiDemo
         private void DrawPoint(SpriteBatch sb, FortuneSite point)
         {
             var size = 5;
-            var rect = new Rectangle((int) (point.X - size /2.0), (int) (point.Y - size /2.0), size, size);
+            var rect = new Rectangle((int)(point.X - size / 2.0), (int)(point.Y - size / 2.0), size, size);
             sb.Draw(t, rect, Color.Green);
         }
 
@@ -273,12 +273,12 @@ namespace VoronoiDemo
         {
             var diff = edge.Item2 - edge.Item1;
             var angle = Math.Atan2(diff.Y, diff.X);
-            var rect = new Rectangle((int) edge.Item1.X, (int) edge.Item1.Y, (int) diff.Length(), 1);
+            var rect = new Rectangle((int)edge.Item1.X, (int)edge.Item1.Y, (int)diff.Length(), 1);
             sb.Draw(t,
                 rect,
                 null,
                 Color.YellowGreen,
-                (float) angle,
+                (float)angle,
                 new Vector2(0, 0),
                 SpriteEffects.None,
                 0);
@@ -289,7 +289,7 @@ namespace VoronoiDemo
     {
         public static Vector2 ToVector2(this FortuneSite site)
         {
-            return new Vector2((float) site.X, (float) site.Y);
+            return new Vector2((float)site.X, (float)site.Y);
         }
 
         public static Vector2 ToVector2(this VPoint site)
@@ -307,7 +307,7 @@ namespace VoronoiDemo
         {
             var vector = edge.ToVector2();
             angle = (float)Math.Atan2(vector.Y, vector.X);
-            return new Rectangle((int) edge.Start.X, (int) edge.Start.Y, (int)vector.Length(), 1);
+            return new Rectangle((int)edge.Start.X, (int)edge.Start.Y, (int)vector.Length(), 1);
         }
     }
 }
