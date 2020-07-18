@@ -74,8 +74,8 @@ namespace VoronoiLib
             var edgesCopy = edges.ToList();
             var leftEdges = edgesCopy
                             .Where(edge => edge.Start.X.ApproxEqual(minX) || edge.End.X.ApproxEqual(minX))
-                            .Select(edge => (Edge: edge, Vertex: edge.Start.X.ApproxEqual(minX) ? edge.Start : edge.End, Start: edge.Start.X.ApproxEqual(minX)))
-                            .OrderBy(tuple => tuple.Vertex.Y)
+                            .Select(edge => new BoundingBoxInfo { Edge = edge, Vertex = edge.Start.X.ApproxEqual(minX) ? edge.Start : edge.End, Start = edge.Start.X.ApproxEqual(minX) })
+                            .OrderBy(info => info.Vertex.Y)
                             .ToArray();
 
             var topLeftPoint = new VPoint(minX, minY);
@@ -101,8 +101,8 @@ namespace VoronoiLib
 
             var topEdges = edgesCopy
                            .Where(edge => edge.Start.Y.ApproxEqual(minY) || edge.End.Y.ApproxEqual(minY))
-                           .Select(edge => (Edge: edge, Vertex: edge.Start.Y.ApproxEqual(minY) ? edge.Start : edge.End, Start: edge.Start.Y.ApproxEqual(minY)))
-                           .OrderBy(tuple => tuple.Vertex.X)
+                           .Select(edge => new BoundingBoxInfo { Edge = edge, Vertex = edge.Start.Y.ApproxEqual(minY) ? edge.Start : edge.End, Start = edge.Start.Y.ApproxEqual(minY) })
+                           .OrderBy(info => info.Vertex.X)
                            .ToArray();
 
             startPoint = topLeftPoint;
@@ -123,8 +123,8 @@ namespace VoronoiLib
 
             var rightEdges = edgesCopy
                              .Where(edge => edge.Start.X.ApproxEqual(maxX) || edge.End.X.ApproxEqual(maxX))
-                             .Select(edge => (Edge: edge, Vertex: edge.Start.X.ApproxEqual(maxX) ? edge.Start : edge.End, Start: edge.Start.X.ApproxEqual(maxX)))
-                             .OrderBy(tuple => tuple.Vertex.Y)
+                             .Select(edge => new BoundingBoxInfo { Edge = edge, Vertex = edge.Start.X.ApproxEqual(maxX) ? edge.Start : edge.End, Start = edge.Start.X.ApproxEqual(maxX) })
+                             .OrderBy(info => info.Vertex.Y)
                              .ToArray();
 
             startPoint = topRightPoint;
@@ -145,8 +145,8 @@ namespace VoronoiLib
 
             var bottomEdges = edgesCopy
                               .Where(edge => edge.Start.Y.ApproxEqual(maxY) || edge.End.Y.ApproxEqual(maxY))
-                              .Select(edge => (Edge: edge, Vertex: edge.Start.Y.ApproxEqual(maxY) ? edge.Start : edge.End, Start: edge.Start.Y.ApproxEqual(maxY)))
-                              .OrderBy(tuple => tuple.Vertex.X)
+                              .Select(edge => new BoundingBoxInfo { Edge = edge, Vertex = edge.Start.Y.ApproxEqual(maxY) ? edge.Start : edge.End, Start = edge.Start.Y.ApproxEqual(maxY) })
+                              .OrderBy(info => info.Vertex.X)
                               .ToArray();
 
             startPoint = bottomLeftPoint;
