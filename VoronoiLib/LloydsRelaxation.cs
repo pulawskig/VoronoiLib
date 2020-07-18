@@ -10,38 +10,38 @@ namespace VoronoiLib
         public static List<FortuneSite> Relax(List<FortuneSite> sites)
         {
             return sites
-                   .Select(site => FindCentroid(site.Points
-                                                    .Select(point => (point.X, point.Y))
-                                                    .ToList()))
-                   .Select(tuple => new FortuneSite(tuple.X, tuple.Y))
+                   .Select(site => FindCentroid(site.Points))
+                   .Select(point => new FortuneSite(point.X, point.Y))
                    .ToList();
         }
 
-        private static (double X, double Y) FindCentroid(IReadOnlyList<(double X, double Y)> vertices)
+        private static VPoint FindCentroid(IReadOnlyList<VPoint> vertices)
         {
-            var x = 0d;
-            var y = 0d;
+            var point = new VPoint(0d, 0d);
             var area = 0d;
 
             for (var i = 0; i < vertices.Count; i++)
             {
-                var (x0, y0) = vertices[i];
-                var (x1, y1) = vertices[(i + 1) % vertices.Count];
+                var nextI = (i + 1) % vertices.Count;
+                var x0 = vertices[i].X;
+                var y0 = vertices[i].Y;
+                var x1 = vertices[nextI].X;
+                var y1 = vertices[nextI].Y;
 
                 var a = (x0 * y1) - (x1 * y0);
                 area += a;
-                x += (x0 + x1) * a;
-                y += (y0 + y1) * a;
+                point.X += (x0 + x1) * a;
+                point.Y += (y0 + y1) * a;
             }
 
             if (!area.ApproxEqual(0d))
             {
                 area *= 3d;
-                x /= area;
-                y /= area;
+                point.X /= area;
+                point.Y /= area;
             }
 
-            return (x, y);
+            return point;
         }
     }
 }

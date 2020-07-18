@@ -2,8 +2,8 @@
 {
     public class VPoint
     {
-        public double X { get; }
-        public double Y { get; }
+        public double X { get; set; }
+        public double Y { get; set; }
 
         internal VPoint(double x, double y)
         {
