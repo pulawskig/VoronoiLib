@@ -51,8 +51,11 @@ namespace VoronoiLib
                 else
                 {
                     // add the edge's start/end points to the adjacent nodes cell
-                    edgeNode.Value.Left.AddEdge(edgeNode.Value);
-                    edgeNode.Value.Right.AddEdge(edgeNode.Value);
+                    edge.Left.AddEdge(edge);
+                    edge.Right.AddEdge(edge);
+
+                    edge.Left.Neighbors.Add(edge.Right);
+                    edge.Right.Neighbors.Add(edge.Left);
                 }
 
                 //advance

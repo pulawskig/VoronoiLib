@@ -10,7 +10,7 @@ namespace VoronoiLib.Structures
 
         public List<VEdge> Cell { get; set; }
 
-        public List<FortuneSite> Neighbors { get; private set; }
+        public List<FortuneSite> Neighbors { get; }
 
         private List<VPoint> _points;
         public List<VPoint> Points

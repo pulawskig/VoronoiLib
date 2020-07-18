@@ -17,7 +17,7 @@ namespace VoronoiLib
                    .ToList();
         }
 
-        private static (double X, double Y) FindCentroid(List<(double X, double Y)> vertices)
+        private static (double X, double Y) FindCentroid(IReadOnlyList<(double X, double Y)> vertices)
         {
             var x = 0d;
             var y = 0d;
@@ -43,7 +43,5 @@ namespace VoronoiLib
 
             return (x, y);
         }
-
-        
     }
 }
