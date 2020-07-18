@@ -5,6 +5,7 @@ namespace VoronoiLib.Structures
 {
     public class FortuneSite
     {
+        public int Id { get; set; }
         public double X { get; }
         public double Y { get; }
 
