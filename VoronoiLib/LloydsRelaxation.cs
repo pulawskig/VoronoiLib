@@ -10,8 +10,8 @@ namespace VoronoiLib
         public static List<FortuneSite> Relax(List<FortuneSite> sites)
         {
             return sites
-                   .Select(site => FindCentroid(site.Points))
-                   .Select(point => new FortuneSite(point.X, point.Y))
+                   .Select(site => new Tuple<VPoint, int>(FindCentroid(site.Points), site.Id))
+                   .Select(point => new FortuneSite(point.Item1.X, point.Item1.Y) { Id = point.Item2 })
                    .ToList();
         }
 
